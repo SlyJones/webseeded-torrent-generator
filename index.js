@@ -1,8 +1,9 @@
 'use strict';
 
 var Torrent = require('./lib/torrent');
+var fs = require('fs');
 
-var base = 'http://ia700201.us.archive.org/6/items';
+var base = 'http://ia700201.us.archive.org/6/items/';
 var name = 'jj2005-02-27.fm.shnf';
 var files = [
     'jj2005-02-27.fm.d1.md5',
@@ -40,7 +41,9 @@ var files = [
     'jj2005-02-27.fm.shnf_vbr.m3u'
 ];
 
-var torrent = new Torrent(base, name, files);
-torrent.getMetadata().then(function (metadata) {
-    console.log(JSON.stringify(metadata, null, 4));
+new Torrent(base, name, files).getMetadata().then(function (metadata) {
+    fs.writeFile('test.torrent', metadata, function (err) {
+        if (err) throw err;
+        console.log('written to test.torrent');
+    });
 });
