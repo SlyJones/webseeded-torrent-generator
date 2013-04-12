@@ -2,48 +2,50 @@
 
 var Torrent = require('./lib/torrent');
 var fs = require('fs');
+var _ = require('lodash');
 
-var base = 'http://ia700201.us.archive.org/6/items/';
-var name = 'jj2005-02-27.fm.shnf';
-var files = [
-    'jj2005-02-27.fm.d1.md5',
-    'jj2005-02-27.fm.d1.txt',
-    'jj2005-02-27.fm.d1t1.ogg',
-    'jj2005-02-27.fm.d1t1.shn',
-    'jj2005-02-27.fm.d1t1_64kb.mp3',
-    'jj2005-02-27.fm.d1t1_vbr.mp3',
-    'jj2005-02-27.fm.d1t2.ogg',
-    'jj2005-02-27.fm.d1t2.shn',
-    'jj2005-02-27.fm.d1t2_64kb.mp3',
-    'jj2005-02-27.fm.d1t2_vbr.mp3',
-    'jj2005-02-27.fm.d1t3.ogg',
-    'jj2005-02-27.fm.d1t3.shn',
-    'jj2005-02-27.fm.d1t3_64kb.mp3',
-    'jj2005-02-27.fm.d1t3_vbr.mp3',
-    'jj2005-02-27.fm.d1t4.ogg',
-    'jj2005-02-27.fm.d1t4.shn',
-    'jj2005-02-27.fm.d1t4_64kb.mp3',
-    'jj2005-02-27.fm.d1t4_vbr.mp3',
-    'jj2005-02-27.fm.d1t5.ogg',
-    'jj2005-02-27.fm.d1t5.shn',
-    'jj2005-02-27.fm.d1t5_64kb.mp3',
-    'jj2005-02-27.fm.d1t5_vbr.mp3',
-    'jj2005-02-27.fm.d1t6.ogg',
-    'jj2005-02-27.fm.d1t6.shn',
-    'jj2005-02-27.fm.d1t6_64kb.mp3',
-    'jj2005-02-27.fm.d1t6_vbr.mp3',
-    'jj2005-02-27.fm.d1t7.ogg',
-    'jj2005-02-27.fm.d1t7.shn',
-    'jj2005-02-27.fm.d1t7_64kb.mp3',
-    'jj2005-02-27.fm.d1t7_vbr.mp3',
-    'jj2005-02-27.fm.shnf_64kb.m3u',
-    'jj2005-02-27.fm.shnf_meta.xml',
-    'jj2005-02-27.fm.shnf_vbr.m3u'
-];
+var express = require('express');
+var app = express();
 
-new Torrent(base, name, files).getMetadata().then(function (metadata) {
-    fs.writeFile('test.torrent', metadata, function (err) {
-        if (err) throw err;
-        console.log('written to test.torrent');
+app.use(express.favicon());
+app.use(express.logger());
+app.use(express.bodyParser());
+
+app.post('/', function(req, res) {
+    if(!req.body.hasOwnProperty('base')) {
+        return res.send(400, 'base parameter missing');
+    } else if (!_.isString(req.body.base)) {
+        return res.send(400, 'base parameter is not a valid string');
+    }
+
+    if(!req.body.hasOwnProperty('name')) {
+        return res.send(400, 'name parameter missing');
+    } else if (!_.isString(req.body.name)) {
+        return res.send(400, 'name parameter is not a valid string');
+    }
+
+    if(!req.body.hasOwnProperty('files')) {
+        return res.send(400, 'files parameter missing');
+    } else if (!_.isArray(req.body.files)) {
+        return res.send(400, 'files parameter is not a valid array');
+    }
+
+    var base = req.body.base;
+    var name = req.body.name;
+    var files = req.body.files;
+    var torrentName = name + '.torrent';
+
+    console.log('requesting ' + torrentName);
+
+    new Torrent(base, name, files).getMetadata().then(function (metadata) {
+        res.type('application/x-bittorrent');
+        res.attachment(torrentName);
+        res.send(200, metadata);
+        console.log('served ' + torrentName);
     });
 });
+
+app.listen(3000);
+
+module.exports = app;
+

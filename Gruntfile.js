@@ -14,7 +14,9 @@ module.exports = function (grunt) {
         },
         mochaTest: {
             files: [
-                'test/*.js'
+                'test/http-fs.js',
+                'test/torrent.js',
+                'test/index.js'
             ]
         },
         mochaTestConfig: {

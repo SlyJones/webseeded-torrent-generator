@@ -16,7 +16,7 @@ var assert = require('assert');
 
 describe('Torrent Generation', function () {
     it('generates a replica of a working internet archive backed torrent', function (done) {
-        this.timeout(120000);
+        this.timeout(180000);
 
         var torrent = fs.readFileSync('./test/torrents/test.torrent');
 
@@ -59,7 +59,7 @@ describe('Torrent Generation', function () {
         ];
 
         new Torrent(base, name, files).getMetadata().then(function (metadata) {
-            assert(torrent.toString() === metadata.toString());
+            assert(torrent.toString() === metadata.toString(), 'torrent generated matches expected torrent file');
             done();
         });
     });
