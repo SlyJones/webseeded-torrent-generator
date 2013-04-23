@@ -13,12 +13,45 @@
 var Torrent = require('../lib/torrent');
 var fs = require('fs');
 var assert = require('assert');
+var q = require('q');
 
 describe('Torrent Generation', function () {
-    it('generates a replica of a working internet archive backed torrent', function (done) {
+    it('generates a replica of a small working internet archive backed torrent', function (done) {
         this.timeout(180000);
 
-        var torrent = fs.readFileSync('./test/torrents/test.torrent');
+        var infoHash = 'ab715690d4c95dd147f6f2fe9f071705bbe22028';
+        var torrentFile = fs.readFileSync('./test/torrents/' + infoHash + '.torrent');
+
+        var base = 'http://ia700201.us.archive.org/6/items/';
+        var name = 'jj2005-02-27.fm.shnf';
+        var files = [
+            'jj2005-02-27.fm.d1.md5',
+            'jj2005-02-27.fm.d1.txt'
+        ];
+
+        var torrent = new Torrent(base, name, files);
+        var metadataRequest = torrent.getMetadata().then(function (res) {
+            assert(torrentFile.toString() === res.toString(), 'torrent generated matches expected torrent file');
+            return q.resolve();
+        });
+
+        var infoHashRequest = torrent.getInfoHash().then(function (res) {
+            assert(infoHash === res, 'torrent generated matches expected torrent file');
+            return q.resolve();
+        });
+
+        q.all([
+            metadataRequest,
+            infoHashRequest
+        ]).then(function () {
+            done();
+        });
+    });
+    it('generates a replica of a large working internet archive backed torrent', function (done) {
+        this.timeout(180000);
+
+        var infoHash = '5c852dd0246f4dc41da16bb5e6bd4d3e9d5ef3a6';
+        var torrentFile = fs.readFileSync('./test/torrents/' + infoHash + '.torrent');
 
         var base = 'http://ia700201.us.archive.org/6/items/';
         var name = 'jj2005-02-27.fm.shnf';
@@ -58,8 +91,20 @@ describe('Torrent Generation', function () {
             'jj2005-02-27.fm.shnf_vbr.m3u'
         ];
 
-        new Torrent(base, name, files).getMetadata().then(function (metadata) {
-            assert(torrent.toString() === metadata.toString(), 'torrent generated matches expected torrent file');
+        var torrent = new Torrent(base, name, files);
+        var metadataRequest = torrent.getMetadata().then(function (res) {
+            assert(torrentFile.toString() === res.toString(), 'torrent generated matches expected torrent file');
+            return q.resolve();
+        });
+
+        var infoHashRequest = torrent.getInfoHash().then(function (res) {
+            assert(infoHash === res, 'torrent generated matches expected torrent file');
+            return q.resolve();
+        });
+        q.all([
+            metadataRequest,
+            infoHashRequest
+        ]).then(function () {
             done();
         });
     });

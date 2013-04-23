@@ -47,7 +47,7 @@ describe('POST /', function () {
     it('responds with the expected torrent file', function (done) {
         this.timeout(180000);
 
-        var torrent = fs.readFileSync('./test/torrents/test.torrent');
+        var torrent = fs.readFileSync('./test/torrents/5c852dd0246f4dc41da16bb5e6bd4d3e9d5ef3a6.torrent');
 
         request(app)
             .post('/')

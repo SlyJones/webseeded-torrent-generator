@@ -3,9 +3,17 @@
 var Torrent = require('./lib/torrent');
 var fs = require('fs');
 var _ = require('lodash');
+var knox = require('knox');
+var assert = require('assert');
 
 var express = require('express');
 var app = express();
+
+var nconf = require('nconf');
+nconf.file({ file: '.env' });
+assert(nconf.get('S3_ID'), 's3 access key id required in .env - S3_ID');
+assert(nconf.get('S3_SECRET'), 's3 secret access key required in .env - S3_SECRET');
+assert(nconf.get('S3_BUCKET'), 's3 bucket required in .env - S3_BUCKET');
 
 app.use(express.favicon());
 app.use(express.logger());
@@ -37,11 +45,16 @@ app.post('/', function(req, res) {
 
     console.log('requesting ' + torrentName);
 
-    new Torrent(base, name, files).getMetadata().then(function (metadata) {
+    var torrent = new Torrent(base, name, files);
+    var torrentGeneratorRequest = torrent.getMetadata();
+
+    torrentGeneratorRequest.done(function (metadata) {
         res.type('application/x-bittorrent');
         res.attachment(torrentName);
         res.send(200, metadata);
-        console.log('served ' + torrentName);
+    });
+    torrentGeneratorRequest.fail(function (error) {
+        res.send(400, error);
     });
 });
 
