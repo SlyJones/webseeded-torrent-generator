@@ -1,22 +1,41 @@
 {
-  "name": "webseeded-torrent-generator",
-  "version": "0.1.0",
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-uglify": "~0.2.0",
-    "grunt-mocha-test": "~0.2.2",
-    "matchdep": "~0.1.2",
-    "mocha": "~1.8.1",
-    "supertest": "~0.5.1"
-  },
-  "dependencies": {
-    "lodash": "~1.1.1",
-    "assert": "~0.4.9",
-    "url": "~0.7.9",
-    "q": "~0.9.2",
-    "bencode": "~0.4.3"
-  },
-  "main": "lib/torrent"
+    "name": "webseeded-torrent-generator",
+    "version": "0.1.1",
+    "description": "Generate webseeded torrent files from urls to files.",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/bittorrent/webseeded-torrent-generator.git"
+    },
+    "keywords": [
+        "BitTorrent",
+        "torrent",
+        "webseed",
+        "webseeding",
+        "url-list"
+    ],
+    "author": "Patrick Williams (BitTorrent Inc.) <pwmckenna@gmail.com>",
+    "readmeFilename": "README.md",
+    "homepage": "http://www.bittorrent.com/",
+    "bugs": "https://github.com/bittorrent/webseeded-torrent-generator/issues",
+    "engines": {
+        "node": ">=0.8.0"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.1.1",
+        "grunt-contrib-nodeunit": "~0.1.2",
+        "grunt-contrib-uglify": "~0.2.0",
+        "grunt-mocha-test": "~0.2.2",
+        "matchdep": "~0.1.2",
+        "mocha": "~1.8.1",
+        "supertest": "~0.5.1"
+    },
+    "dependencies": {
+        "lodash": "~1.1.1",
+        "assert": "~0.4.9",
+        "url": "~0.7.9",
+        "q": "~0.9.2",
+        "bencode": "~0.4.3"
+    },
+    "main": "lib/torrent"
 }
